@@ -12,7 +12,7 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
   const [filterPersons, setFilterPersons] = useState([])
   const [message, setMessage] = useState(null)
-  const baseURL = 'http://localhost:3001/persons'
+  const baseURL = '/api/persons'
 
   useEffect(() => {
     personService
