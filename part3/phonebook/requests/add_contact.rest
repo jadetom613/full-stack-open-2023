@@ -1,7 +1,10 @@
-POST http://localhost:3001/api/persons
+POST https://phone-book-hg3w.onrender.com
 Content-Type: application/json
 
 {
     "name": "jade tam",
     "number": "123-456789"
 }
+
+###
+GET https://phone-book-hg3w.onrender.com/persons
