@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 app.use(cors())
@@ -33,31 +34,32 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-  //console.log(request)  
+  //
   response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${new Date}</p>`)
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {response.json(persons)})
 })
 
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).send('No data found').end()
-  }
+  Person.findById(request.params.id)
+  .then(person => {
+    if (person){
+      response.json(person)
+    }else {
+      response.status(404).send('No data found').end()
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    response.status(500).end()
+  })
 })
 
-const generateId = () => {
-  const randomID = Math.floor(Math.random()*99999)
-  return randomID
-}
-
 const checkName = (name) => {
-    const found = persons.some((person) => person.name === name)
+    const found = Person.find(name)
     return found
 }
 
@@ -76,22 +78,28 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number,
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save()
+  .then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(note => note.id !== id)
+  const id = request.params.id
+  Person.findByIdAndDelete(id)
+  .then(() => {
+    response.status(204).end()
+  })
+  .catch(error => {
+    console.log(error.message)
+  })
 
-  response.status(204).end()
+  
 })
 
 const PORT = process.env.PORT || 3001

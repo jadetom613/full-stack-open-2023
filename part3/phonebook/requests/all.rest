@@ -1,0 +1,16 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "jade tam",
+    "number": "123-456789"
+}
+
+###
+GET https://phone-book-hg3w.onrender.com/api/persons
+
+###
+DELETE https://phone-book-hg3w.onrender.com/api/persons/56547
+
+###
+PUT
