@@ -1,19 +1,19 @@
-POST http://localhost:3001/api/persons/new
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "test4",
-    "number": "132-956874"
+    "name": "te",
+    "number": "1-956874"
 }
 
 ###
 GET https://phone-book-hg3w.onrender.com/api/persons
 
 ###
-DELETE http://localhost:3001/api/persons/64c8d06eeb1ee0fb4ca73490
+DELETE http://localhost:3001/api/persons/64c9044c968b24be1839deaf
 
 ###
-PUT http://localhost:3001/api/persons/64c8e38111c3f926d6949426
+PUT http://localhost:3001/api/persons/64c9044c968b24be1839deaf
 Content-Type: application/json
 
 {

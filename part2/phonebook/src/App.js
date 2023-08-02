@@ -75,7 +75,7 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
-          setMessage('Update unsucessful!!')
+          setMessage(error.response.data.error)
         })
       }
     }else{
@@ -88,8 +88,8 @@ const App = () => {
         setFilterPersons(persons.concat(response))
       })
       .catch(error => {
-        console.log(error)
-        setMessage('Create fail!!')
+        console.log("create fail: ", error.response.data.error)
+        setMessage(error.response.data.error)
         setTimeout(() => {
             setMessage(null)
         },5000)
