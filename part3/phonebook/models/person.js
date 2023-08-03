@@ -1,18 +1,5 @@
 // mongondb configuration
-require('dotenv').config()
-//console.log(process.env.MONGODB_PASSWORD)
 const mongoose = require('mongoose')
-mongoose.set('strictQuery',false)
-
-const url = process.env.MONGODB_URL
-console.log('connecting to', url)
-mongoose.connect(url)
-  .then(result => {
-    console.log('Connected to MongoDB')
-  })
-  .catch(error => {
-    console.log('error connecting to MongoDB: ', error.message)
-  })
 
 function numValidator(num) {
   return /\d{2,3}-\d*/.test(num)
