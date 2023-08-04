@@ -17,7 +17,6 @@ const totalLikes = (blogs) => {
 }
 
 const favouriteBlog = (blogs) => {
-  //Math.max(...blogs.map(blog => blog.likes))
   const mostLiked = blogs.reduce((prev, curr) => {
     return prev.likes > curr.likes ? prev : curr
   })
@@ -73,7 +72,6 @@ const mostLikes = (blogs) => {
   }
   return mostLikes
 }
-
 
 module.exports = {
   dummy,
