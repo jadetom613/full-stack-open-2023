@@ -2,20 +2,35 @@ const mongoose = require('mongoose')
 mongoose.set('bufferTimeoutMS', 30000)
 const supertest = require('supertest')
 const app = require('../app')
+const helper = require('../utils/list_helper')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-test('4.8 blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-}, 100000)
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+})
 
-test('4.9 id property is within the returned blog object', async () => {
-  const response = await api
-    .get('/api/blogs')
-  response.body.map(blog => expect(blog.id).toBeDefined())
+describe('test Started', () => {
+
+  test('4.8 blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  }, 100000)
+
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('4.9 id property is within the returned blog object', async () => {
+    const response = await api
+      .get('/api/blogs')
+    response.body.map(blog => expect(blog.id).toBeDefined())
+  })
 })
 
 test('4.10 blog is created by POST and save in database', async () => {
@@ -59,7 +74,7 @@ test('4.11 verifies that if the likes property is missing', async () => {
   expect(likes[initBlogsLength]).toBe(0)
 })
 
-test.only('4.12 Creating new blog with missing property', async () => {
+test('4.12 Creating new blog with missing property', async () => {
   const newBlog = {
     author: 'Jest',
     likes: 666
@@ -69,6 +84,12 @@ test.only('4.12 Creating new blog with missing property', async () => {
     .send(newBlog)
     .expect(400)
     .expect('Content-Type', /application\/json/)
+})
+
+test('4.13 Deleting a single blog post resource', async () => {
+  await api
+    .delete('/api/blogs/64cb20fcd8740c539fe61eb5')
+    .expect(204)
 })
 
 afterAll(async () => {

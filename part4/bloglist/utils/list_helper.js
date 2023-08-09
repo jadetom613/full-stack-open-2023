@@ -6,6 +6,21 @@ const dummy = (blogs) => {
   }
 }
 
+const  initialBlogs = [
+  {
+    'title': 'Blog1',
+    'author': 'jade tam',
+    'url': 'https://www.google.com.hk/',
+    'likes': 3
+  },
+  {
+    'title': 'Blog2',
+    'author': 'jade tam',
+    'url': 'https://www.google.com.hk/',
+    'likes': 3
+  }
+]
+
 const totalLikes = (blogs) => {
   if( blogs.length === 0 ){
     return 0
@@ -75,6 +90,7 @@ const mostLikes = (blogs) => {
 
 module.exports = {
   dummy,
+  initialBlogs,
   totalLikes,
   favouriteBlog,
   mostBlogs,

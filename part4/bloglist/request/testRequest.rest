@@ -7,3 +7,14 @@ Content-Type: application/json
   "url": "https://www.google.com.hk/",
   "likes": 3
 }
+
+###
+PUT http://localhost:3003/api/blogs/64ccbf590c24a6a8376ca785
+Content-Type: application/json
+
+{
+  "title": "Blog2",
+  "author": "jade tam",
+  "url": "https://www.google.com.hk/",
+  "likes": 3
+}
