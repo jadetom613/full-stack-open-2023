@@ -7,89 +7,131 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
-})
-
 describe('test Started', () => {
+  let token = ''
+  let initBlogsLength = 0
+  let userId = ''
 
-  test('4.8 blogs are returned as json', async () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    //api.set('Authorization ' ,`Bearer ${response.body.token}`)
+    await Blog.insertMany(helper.initialBlogs)
+    const response = await api
+      .post('/api/login')
+      .send({ username: 'jjai', password: 'secret' })
+    token = response.body.token
+    initBlogsLength = (await api.get('/api/blogs').set('Authorization' ,`Bearer ${token}`)).body.length
+  })
+
+  test.only('4.8 blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   }, 100000)
 
-  test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+  test.only('all blogs are returned', async () => {
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('4.9 id property is within the returned blog object', async () => {
+  test.only('4.9 id property is within the returned blog object', async () => {
     const response = await api
       .get('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
     response.body.map(blog => expect(blog.id).toBeDefined())
   })
-})
 
-test('4.10 blog is created by POST and save in database', async () => {
-  const initBlogsLength = (await api.get('/api/blogs')).body.length
+  test.only('4.10 blog is created by POST and save in database', async () => {
+  //const initBlogsLength = (await api.get('/api/blogs').set('Authorization' ,`Bearer ${token}`)).body.length
 
-  const newBlog = {
-    title: 'Test',
-    author: 'Jest',
-    url: 'https://jestjs.io/',
-    likes: 22
-  }
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    const newBlog = {
+      title: 'Test',
+      author: 'Jest',
+      url: 'https://jestjs.io/',
+      likes: 22
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization' ,`Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  const titles = response.body.map(blog => blog.title)
-  expect(response.body).toHaveLength(initBlogsLength + 1)
-  expect(titles).toContain('Test')
-})
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
+    const titles = response.body.map(blog => blog.title)
+    expect(response.body).toHaveLength(initBlogsLength + 1)
+    expect(titles).toContain('Test')
+  })
 
-test('4.11 verifies that if the likes property is missing', async () => {
-  const initBlogsLength = (await api.get('/api/blogs')).body.length
+  test.only('4.11 verifies that if the likes property is missing', async () => {
 
-  const newBlog = {
-    title: 'Test for likes property',
-    author: 'Jest',
-    url: 'https://jestjs.io/'
-  }
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    const newBlog = {
+      title: 'Test for likes property',
+      author: 'Jest',
+      url: 'https://jestjs.io/'
+    }
+    await api
+      .post('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  const likes = response.body.map(blog => blog.likes)
-  expect(response.body).toHaveLength(initBlogsLength + 1)
-  expect(likes[initBlogsLength]).toBe(0)
-})
+    const response = await api.get('/api/blogs').set('Authorization' ,`Bearer ${token}`)
+    const likes = response.body.map(blog => blog.likes)
+    expect(response.body).toHaveLength(initBlogsLength + 1)
+    expect(likes[initBlogsLength]).toBe(0)
+  })
 
-test('4.12 Creating new blog with missing property', async () => {
-  const newBlog = {
-    author: 'Jest',
-    likes: 666
-  }
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+  test.only('4.12 Creating new blog with missing property', async () => {
+    const newBlog = {
+      author: 'Jest',
+      likes: 666
+    }
+    await api
+      .post('/api/blogs')
+      .set('Authorization' ,`Bearer ${token}`)
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+  })
 
-test('4.13 Deleting a single blog post resource', async () => {
-  await api
-    .delete('/api/blogs/64cb20fcd8740c539fe61eb5')
-    .expect(204)
+  test.only('4.13 Deleting a single blog post resource', async () => {
+    const newBlog = {
+      title: 'Test',
+      author: 'Jest',
+      url: 'https://jestjs.io/',
+      likes: 22
+    }
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization' ,`Bearer ${token}`)
+
+    await api
+      .delete(`/api/blogs/${response.body.id}`)
+      .set('Authorization' ,`Bearer ${token}`)
+      .expect(204)
+  })
+
+  test.only('4.23 Adding new blog without token return 401', async () => {
+    const newBlog = {
+      title: 'Test',
+      author: 'Jest',
+      url: 'https://jestjs.io/',
+      likes: 22
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  })
 })
 
 afterAll(async () => {
