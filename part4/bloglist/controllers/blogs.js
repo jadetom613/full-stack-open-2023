@@ -24,6 +24,9 @@ blogRouter.post('/', async (request, response) => {
     //console.log('in If:', request.body)
   }
   const user = request.user
+  if(!user){
+    response.status(401)
+  }
   //console.log(user)
   request.body.user = user.id
 
