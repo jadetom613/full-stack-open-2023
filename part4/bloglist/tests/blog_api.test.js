@@ -10,7 +10,6 @@ const api = supertest(app)
 describe('test Started', () => {
   let token = ''
   let initBlogsLength = 0
-  let userId = ''
 
   beforeEach(async () => {
     await Blog.deleteMany({})
