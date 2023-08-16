@@ -65,7 +65,9 @@ blogRouter.delete('/:id', async (request, response) => {
 })
 
 blogRouter.put('/:id', async (request, response) => {
+
   const blog = {
+    user: request.body.id,
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
